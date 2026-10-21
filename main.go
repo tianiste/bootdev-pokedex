@@ -9,6 +9,10 @@ func cleanInput(text string) []string {
 }
 
 func main() {
-	cfg := *&config{}
+	firstURL := "https://pokeapi.co/api/v2/location-area/?limit=20&offset=0"
+
+	cfg := *&config{
+		Next: &firstURL,
+	}
 	startRepl(&cfg)
 }
