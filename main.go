@@ -9,5 +9,6 @@ func cleanInput(text string) []string {
 }
 
 func main() {
-	startRepl()
+	cfg := *&config{}
+	startRepl(&cfg)
 }
