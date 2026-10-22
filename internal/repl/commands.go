@@ -8,13 +8,13 @@ import (
 	"os"
 )
 
-func commandExit(cfg *Config) error {
+func commandExit(cfg *Config, _ ...string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(cfg *Config) error {
+func commandHelp(cfg *Config, _ ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Print("Usage: \n\n")
 	commands := GetCommands()
@@ -24,7 +24,7 @@ func commandHelp(cfg *Config) error {
 	return nil
 }
 
-func commandMap(cfg *Config) error {
+func commandMap(cfg *Config, _ ...string) error {
 	var resp response
 
 	url := *cfg.Next
@@ -65,7 +65,7 @@ func commandMap(cfg *Config) error {
 	return nil
 }
 
-func commandMapb(cfg *Config) error {
+func commandMapb(cfg *Config, _ ...string) error {
 	var resp response
 
 	if cfg.Previous == nil {

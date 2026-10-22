@@ -29,7 +29,7 @@ func StartRepl(cfg *Config) {
 			fmt.Println("Unknown command")
 			continue
 		}
-		if err := cmd.Callback(cfg); err != nil {
+		if err := cmd.Callback(cfg, words[1:]...); err != nil {
 			fmt.Println("Error :", err)
 		}
 	}

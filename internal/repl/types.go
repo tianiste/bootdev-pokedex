@@ -5,7 +5,7 @@ import "pokedex/internal/pokecache"
 type cliCommand struct {
 	name        string
 	description string
-	Callback    func(*Config) error
+	Callback    func(*Config, ...string) error
 }
 
 type Config struct {
