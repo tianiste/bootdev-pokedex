@@ -1,12 +1,17 @@
-package main
+package repl
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
-func startRepl(cfg *config) {
+func cleanInput(text string) []string {
+	return strings.Fields(strings.ToLower(text))
+}
+
+func StartRepl(cfg *Config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -19,12 +24,12 @@ func startRepl(cfg *config) {
 			continue
 		}
 
-		cmd, ok := getCommands()[words[0]]
+		cmd, ok := GetCommands()[words[0]]
 		if !ok {
 			fmt.Println("Unknown command")
 			continue
 		}
-		if err := cmd.callback(cfg); err != nil {
+		if err := cmd.Callback(cfg); err != nil {
 			fmt.Println("Error :", err)
 		}
 	}

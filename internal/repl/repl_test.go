@@ -1,4 +1,4 @@
-package main
+package repl
 
 import "testing"
 
@@ -9,11 +9,11 @@ func TestCleanInput(t *testing.T) {
 	}{
 		{
 			input:    " Hello world ",
-			expected: []string{"Hello", "world"},
+			expected: []string{"hello", "world"},
 		},
 		{
 			input:    "Hey there",
-			expected: []string{"Hey", "there"},
+			expected: []string{"hey", "there"},
 		},
 	}
 	for _, c := range cases {

@@ -1,18 +1,19 @@
 package main
 
 import (
-	"strings"
+	"pokedex/internal/pokecache"
+	"pokedex/internal/repl"
+	"time"
 )
-
-func cleanInput(text string) []string {
-	return strings.Fields(strings.ToLower(text))
-}
 
 func main() {
 	firstURL := "https://pokeapi.co/api/v2/location-area/?limit=20&offset=0"
+	cache := pokecache.NewCache(5 * time.Second)
 
-	cfg := *&config{
-		Next: &firstURL,
+	cfg := repl.Config{
+		Next:  &firstURL,
+		Cache: cache,
 	}
-	startRepl(&cfg)
+
+	repl.StartRepl(&cfg)
 }
