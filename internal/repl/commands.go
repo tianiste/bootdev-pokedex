@@ -227,6 +227,15 @@ func inspectCommand(cfg *Config, args ...string) error {
 	return nil
 }
 
+func pokedexCommand(cfg *Config, args ...string) error {
+	pokedex := cfg.Pokedex
+	fmt.Println("Your pokedex:")
+	for key := range pokedex {
+		fmt.Printf(" - %s\n", key)
+	}
+	return nil
+}
+
 func GetCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -263,6 +272,11 @@ func GetCommands() map[string]cliCommand {
 			name:        "inspect",
 			description: "Displays details of a caught Pokemon",
 			Callback:    inspectCommand,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Displays all the caught Pokemon",
+			Callback:    pokedexCommand,
 		},
 	}
 }
