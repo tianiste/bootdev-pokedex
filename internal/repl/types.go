@@ -13,13 +13,24 @@ type Config struct {
 	Next     *string
 	Previous *string
 	Cache    *pokecache.Cache
+	Location []location
 }
 
 type response struct {
-	Results []location
+	Results           []location
+	PokemonEncounters []pokemonEncounter `json:"pokemon_encounters"`
 }
 
 type location struct {
+	Name string
+	Url  string
+}
+
+type pokemonEncounter struct {
+	Pokemon pokemon `json:"pokemon"`
+}
+
+type pokemon struct {
 	Name string
 	Url  string
 }

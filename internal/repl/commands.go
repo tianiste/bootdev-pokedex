@@ -58,6 +58,8 @@ func commandMap(cfg *Config, _ ...string) error {
 		return err
 	}
 
+	cfg.Location = append(cfg.Location, resp.Results...)
+
 	for _, location := range resp.Results {
 		fmt.Println(location.Name)
 	}
@@ -103,7 +105,7 @@ func commandMapb(cfg *Config, _ ...string) error {
 	if err != nil {
 		return err
 	}
-
+	cfg.Location = append(cfg.Location, resp.Results...)
 	for _, location := range resp.Results {
 		fmt.Println(location.Name)
 	}
@@ -111,6 +113,55 @@ func commandMapb(cfg *Config, _ ...string) error {
 	return nil
 }
 
+func commandExplore(cfg *Config, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("usage: explore <location-name>")
+	}
+	name := args[0]
+	var resp response
+
+	//	found := slices.ContainsFunc(cfg.Location, func(loc location) bool {
+	//		return loc.Name == name
+	//	})
+
+	//	if !found {
+	//		fmt.Println("Location is not in the displayed list")
+	//		return nil
+	//	}
+	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/%s/", name)
+
+	body, exists := cfg.Cache.Get(url)
+	fmt.Printf("Exploring %s... \n", name)
+	if !exists {
+
+		res, err := http.Get(url)
+		if err != nil {
+			fmt.Println("error while making get request", err)
+			return err
+		}
+		body, err = io.ReadAll(res.Body)
+		res.Body.Close()
+		if res.StatusCode > 299 {
+			return fmt.Errorf("request failed with status code %d: %s", res.StatusCode, body)
+		}
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		cfg.Cache.Add(url, body)
+	}
+
+	err := json.Unmarshal(body, &resp)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Found Pokemon:")
+	for _, encounter := range resp.PokemonEncounters {
+		fmt.Println(" - ", encounter.Pokemon.Name)
+	}
+
+	return nil
+}
 func GetCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -132,6 +183,11 @@ func GetCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Displays the previous 20 location areas",
 			Callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Explores the inputed location listed with the map command",
+			Callback:    commandExplore,
 		},
 	}
 }
