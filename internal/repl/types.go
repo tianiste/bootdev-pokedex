@@ -14,6 +14,7 @@ type Config struct {
 	Previous *string
 	Cache    *pokecache.Cache
 	Location []location
+	Pokedex  map[string]pokemon
 }
 
 type response struct {
@@ -31,6 +32,19 @@ type pokemonEncounter struct {
 }
 
 type pokemon struct {
-	Name string
-	Url  string
+	Name           string `json:"name"`
+	Url            string
+	BaseExperience int           `json:"base_experience"`
+	Height         int           `json:"height"`
+	Weight         int           `json:"weight"`
+	Stats          []pokemonStat `json:"stats"`
+}
+
+type pokemonStat struct {
+	BaseStat int  `json:"base_stat"`
+	Stat     stat `json:"stat"`
+}
+
+type stat struct {
+	Name string `json:"name"`
 }

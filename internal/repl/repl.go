@@ -12,6 +12,7 @@ func cleanInput(text string) []string {
 }
 
 func StartRepl(cfg *Config) {
+	cfg.Pokedex = make(map[string]pokemon)
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")

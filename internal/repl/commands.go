@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 )
@@ -162,6 +163,48 @@ func commandExplore(cfg *Config, args ...string) error {
 
 	return nil
 }
+func commandCatch(cfg *Config, args ...string) error {
+	pokedex := cfg.Pokedex
+	if len(args) != 1 {
+		return fmt.Errorf("usage: catch <pokemon-name>")
+	}
+	name := args[0]
+
+	var resp pokemon
+
+	url := fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s/", name)
+
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Println("error while making get request", err)
+		return err
+	}
+	body, err := io.ReadAll(res.Body)
+	res.Body.Close()
+	if res.StatusCode > 299 {
+		return fmt.Errorf("request failed with status code %d: %s", res.StatusCode, body)
+	}
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Throwing a Pokeball at %s...\n", resp.Name)
+
+	chance := rand.Intn(resp.BaseExperience) + 1
+	if chance >= (resp.BaseExperience / 3) {
+		pokedex[name] = resp
+		fmt.Printf("%s was caught\n", resp.Name)
+		return nil
+	}
+	fmt.Printf("%s escaped!\n", resp.Name)
+
+	return nil
+}
+
 func GetCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -188,6 +231,11 @@ func GetCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Explores the inputed location listed with the map command",
 			Callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Throws a ball at the pokemon",
+			Callback:    commandCatch,
 		},
 	}
 }
