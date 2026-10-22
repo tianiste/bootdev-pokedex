@@ -197,10 +197,32 @@ func commandCatch(cfg *Config, args ...string) error {
 	chance := rand.Intn(resp.BaseExperience) + 1
 	if chance >= (resp.BaseExperience / 3) {
 		pokedex[name] = resp
-		fmt.Printf("%s was caught\n", resp.Name)
+		fmt.Printf("%s was caught\nYou may now inspect it with the inspect command.\n", resp.Name)
 		return nil
 	}
 	fmt.Printf("%s escaped!\n", resp.Name)
+
+	return nil
+}
+
+func inspectCommand(cfg *Config, args ...string) error {
+	pokedex := cfg.Pokedex
+	if len(args) != 1 {
+		return fmt.Errorf("usage: inspect <pokemon-name>")
+	}
+	name := args[0]
+	p, exists := pokedex[name]
+	if !exists {
+		return fmt.Errorf("you haven't caught %s", name)
+	}
+	fmt.Printf("Name: %s\nHeight: %d\nWeight: %d\nStats:\n", p.Name, p.Height, p.Weight)
+	for _, s := range p.Stats {
+		fmt.Printf("  -%s: %d\n", s.Stat.Name, s.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, t := range p.Types {
+		fmt.Printf("  - %s\n", t.Type.Name)
+	}
 
 	return nil
 }
@@ -236,6 +258,11 @@ func GetCommands() map[string]cliCommand {
 			name:        "catch",
 			description: "Throws a ball at the pokemon",
 			Callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Displays details of a caught Pokemon",
+			Callback:    inspectCommand,
 		},
 	}
 }
